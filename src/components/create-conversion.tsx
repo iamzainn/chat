@@ -5,8 +5,8 @@ import { ImageIcon, Users, VideoIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 const Conversation = ({ conversation }: { conversation: any }) => {
-	const conversationImage = conversation.groupImage;
-	const conversationName = conversation.groupName || "Private Chat";
+	const conversationImage = conversation.groupImage || conversation.image;
+	const conversationName = conversation.groupName || conversation.name;
 	const lastMessage = conversation.lastMessage;
 	const lastMessageType = lastMessage?.messageType;
 	const authUser = { _id: "user1" };
