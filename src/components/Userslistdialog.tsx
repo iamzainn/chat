@@ -167,7 +167,7 @@ const UserListDialog = () => {
 					))}
 				</div>
 				<div className='flex justify-between'>
-					<Button variant={"outline"}>Cancel</Button>
+					<Button variant={"outline"} onClick={() => dialogCloseRef.current?.click()}>Cancel</Button>
 					<Button
 						onClick={handleCreateConversation}
 						disabled={selectedUsers.length === 0 || (selectedUsers.length > 1 && !groupName) || isLoading}

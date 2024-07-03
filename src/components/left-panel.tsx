@@ -1,12 +1,12 @@
 
 'use client'
 
-import { ListFilter, LogOut, MessageSquareDiff, Search, User } from "lucide-react";
+import { ListFilter,Search } from "lucide-react";
 
 
 import { Input } from "./ui/input";
 import ThemeSwitch  from "./Theme-switch";
-import { conversations } from "@/dummy-data/db";
+
 
 import { UserButton } from "@clerk/nextjs";
 import { useConvexAuth, useQuery } from "convex/react";
@@ -16,13 +16,13 @@ import Conversation from "./create-conversion";
 
 
 const LeftPanel = () => {
-	const { isAuthenticated, isLoading } = useConvexAuth();
+	const { isAuthenticated } = useConvexAuth();
 	const conversations = useQuery(api.conversations.getMyConversations, isAuthenticated ? undefined : "skip");
 
 	return (
 		<div className='w-1/4 border-gray-600 border-r'>
 			<div className='sticky top-0 bg-left-panel z-10'>
-				{/* Header */}
+				
 				<div className='flex justify-between bg-gray-primary p-3 items-center'>
 					
 					 <UserButton></UserButton>
@@ -38,7 +38,7 @@ const LeftPanel = () => {
 					</div>
 				</div>
 				<div className='p-3 flex items-center'>
-					{/* Search */}
+					
 					<div className='relative h-10 mx-3 flex-1'>
 						<Search
 							className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 z-10'

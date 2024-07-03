@@ -8,29 +8,32 @@ import MessageContainer from "./message-container";
 import ChatPlaceHolder from "./chat-placeholder";
 import MessageInput from "./message-input";
 import GroupMembersDialog from "./group-members-dialog";
+import { useConversationStore } from "@/store/chat-store";
 
 const RightPanel = () => {
-	const selectedConversation = true;
-	const isGroup = true;
+	
+	const {selectedConversation} = useConversationStore();
+	
 	if (!selectedConversation) return <ChatPlaceHolder />;
 
-	const conversationName = "John Doe";
+	const conversationName = selectedConversation.groupName || selectedConversation.name;
+	const image = selectedConversation.groupImage || selectedConversation.image;
 
 	return (
 		<div className='w-3/4 flex flex-col'>
 			<div className='w-full sticky top-0 z-50'>
-				{/* Header */}
+				
 				<div className='flex justify-between bg-gray-primary p-3'>
 					<div className='flex gap-3 items-center'>
 						<Avatar>
-							<AvatarImage src={"/placeholder.png"} className='object-cover' />
+							<AvatarImage src={image || "/placeholder.png"} className='object-cover' />
 							<AvatarFallback>
 								<div className='animate-pulse bg-gray-tertiary w-full h-full rounded-full' />
 							</AvatarFallback>
 						</Avatar>
 						<div className='flex flex-col'>
 							<p>{conversationName}</p>
-							{isGroup && <GroupMembersDialog />}
+							{selectedConversation.isGroup && <GroupMembersDialog selectedConversation={selectedConversation} />}
 						</div>
 					</div>
 
@@ -42,10 +45,10 @@ const RightPanel = () => {
 					</div>
 				</div>
 			</div>
-			{/* CHAT MESSAGES */}
+			
 			<MessageContainer />
 
-			{/* INPUT */}
+			
 			<MessageInput />
 		</div>
 	);
