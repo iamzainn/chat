@@ -1,14 +1,14 @@
+
 import { MessageSeenSvg } from "@/lib/svgs";
 import { IMessage, useConversationStore } from "@/store/chat-store";
 import ChatBubbleAvatar from "./chat-bubble-avatar";
-
+import DateIndicator from "./date-indicator";
 import Image from "next/image";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription } from "../components/ui/dialog";
-
-// import ChatAvatarActions from "./chat-avatar-actions";
+import ReactPlayer from "react-player";
+import ChatAvatarActions from "./chat-avatar-actions";
 import { Bot } from "lucide-react";
-import DateIndicator from "./date-indicator";
 
 type ChatBubbleProps = {
 	message: IMessage;
@@ -32,7 +32,18 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 	console.log(message.sender);
 	const [open, setOpen] = useState(false);
 
-	
+	const renderMessageContent = () => {
+		switch (message.messageType) {
+			case "text":
+				return <TextMessage message={message} />;
+			case "image":
+				return <ImageMessage message={message} handleClick={() => setOpen(true)} />;
+			case "video":
+				return <VideoMessage message={message} />;
+			default:
+				return null;
+		}
+	};
 
 	if (!fromMe) {
 		return (
@@ -43,7 +54,8 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 					<div className={`flex flex-col z-20 max-w-fit px-2 pt-1 rounded-md shadow-md relative ${bgClass}`}>
 						{!fromAI && <OtherMessageIndicator />}
 						{fromAI && <Bot size={16} className='absolute bottom-[2px] left-2' />}
-						<TextMessage message={message}></TextMessage>
+						{<ChatAvatarActions message={message} me={me} />}
+						{renderMessageContent()}
 						{open && <ImageDialog src={message.content} open={open} onClose={() => setOpen(false)} />}
 						<MessageTime time={time} fromMe={fromMe} />
 					</div>
@@ -59,7 +71,7 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 			<div className='flex gap-1 w-2/3 ml-auto'>
 				<div className={`flex  z-20 max-w-fit px-2 pt-1 rounded-md shadow-md ml-auto relative ${bgClass}`}>
 					<SelfMessageIndicator />
-					 <TextMessage message={message}></TextMessage> 
+					{renderMessageContent()}
 					{open && <ImageDialog src={message.content} open={open} onClose={() => setOpen(false)} />}
 					<MessageTime time={time} fromMe={fromMe} />
 				</div>
@@ -69,7 +81,9 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 };
 export default ChatBubble;
 
-
+const VideoMessage = ({ message }: { message: IMessage }) => {
+	return <ReactPlayer url={message.content} width='250px' height='250px' controls={true} light={true} />;
+};
 
 const ImageMessage = ({ message, handleClick }: { message: IMessage; handleClick: () => void }) => {
 	return (

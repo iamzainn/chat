@@ -13,6 +13,7 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { api } from "../../convex/_generated/api";
 import useComponentVisible from "@/hooks/useComponentVisible";
+import MediaDropdown from "./media-dropdown";
 
 const MessageInput = () => {
 	const [msgText, setMsgText] = useState("");
@@ -49,6 +50,7 @@ const MessageInput = () => {
 					)}
 					<Laugh className='text-gray-600 dark:text-gray-400' />
 				</div>
+				<MediaDropdown />
 				
 			</div>
 			<form onSubmit={handleSendTextMsg} className='w-full flex gap-3'>
