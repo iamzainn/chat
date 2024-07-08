@@ -9,10 +9,13 @@ export const sendTextMessage = mutation({
 		conversation: v.id("conversations"),
 	},
 	handler: async (ctx, args) => {
+
+
 		const identity = await ctx.auth.getUserIdentity();
 		if (!identity) {
 			throw new ConvexError("Not authenticated");
 		}
+		console.log("here in messages");
 
 		const user = await ctx.db
 			.query("users")
@@ -36,12 +39,29 @@ export const sendTextMessage = mutation({
 			throw new ConvexError("You are not part of this conversation");
 		}
 
+
+		if (args.content.startsWith("@gpt")) {
+			console.log("here in gpt");
+			await ctx.scheduler.runAfter(0, api.openai.chat, {
+				messageBody: args.content,
+				conversation: args.conversation,
+			});
+		}
+
+		if (args.content.startsWith("@dall-e")) {
+			await ctx.scheduler.runAfter(0, api.openai.dall_e, {
+				messageBody: args.content,
+				conversation: args.conversation,
+			});
+		}
+
 		await ctx.db.insert("messages", {
 			sender: args.sender,
 			content: args.content,
 			conversation: args.conversation,
 			messageType: "text",
 		}) 
+
     } 
 
 })
@@ -104,6 +124,22 @@ export const sendImage = mutation({
 			content: content,
 			sender: args.sender,
 			messageType: "image",
+			conversation: args.conversation,
+		});
+	},
+});
+
+export const sendChatGPTMessage = mutation({
+	args: {
+		content: v.string(),
+		conversation: v.id("conversations"),
+		messageType: v.union(v.literal("text"), v.literal("image")),
+	},
+	handler: async (ctx, args) => {
+		await ctx.db.insert("messages", {
+			content: args.content,
+			sender: "ChatGPT",
+			messageType: args.messageType,
 			conversation: args.conversation,
 		});
 	},
